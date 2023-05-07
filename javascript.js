@@ -23,6 +23,11 @@ function percentage(x)
     return x/100;
 }
 
+function negate(x)
+{
+    return x*-1;
+}
+
 let operandA, operandB, operator;
 
 function operate(a, operation=percentage, b=null,)
@@ -44,6 +49,17 @@ function operate(a, operation=percentage, b=null,)
         case percentage:
             return percentage(a);
             break;
+        case negate:
+            return negate(a);
+            break;
     }
     return true;
 }
+
+const clearButton = document.getElementById('clearButton');
+const number = document.querySelectorAll('[data-number]');
+const display = document.getElementById('display');
+
+number.forEach((button) => {button.addEventListener('click', () => display.textContent+=button.textContent)});
+clearButton.addEventListener('click', () => display.textContent='');
+// button.addEventListener('click', () => display.textContent+=button.textContent);
