@@ -56,10 +56,15 @@ function operate(a, operation=percentage, b=null,)
     return true;
 }
 
-const clearButton = document.getElementById('clearButton');
+const clearAll = document.getElementById('clearAll');
+const clear = document.getElementById('clear');
 const number = document.querySelectorAll('[data-number]');
 const display = document.getElementById('display');
 
 number.forEach((button) => {button.addEventListener('click', () => display.textContent+=button.textContent)});
-clearButton.addEventListener('click', () => display.textContent='');
+clearAll.addEventListener('click', () => display.textContent='');
+clear.addEventListener('click', () => {
+        
+    display.textContent = display.textContent.substring(0, display.textContent.length-1);
+})
 // button.addEventListener('click', () => display.textContent+=button.textContent);

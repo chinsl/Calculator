@@ -22,7 +22,7 @@ body {
 
     display: flex;
     width: 23%;
-    height: 20%;
+    height: 19%;
     justify-content: space-evenly;
     align-items: center;
 }
@@ -52,7 +52,7 @@ body {
     align-items: flex-end; 
 
     font-size: 35px;   
-    padding: 0px 5px;
+    padding: 0 5px;
     overflow: hidden;
 }
 
