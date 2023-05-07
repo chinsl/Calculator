@@ -56,15 +56,43 @@ function operate(a, operation=percentage, b=null,)
     return true;
 }
 
-const clearAll = document.getElementById('clearAll');
-const clear = document.getElementById('clear');
+const clearAllButton = document.getElementById('clearAll');
+const clearButton = document.getElementById('clear');
 const number = document.querySelectorAll('[data-number]');
 const display = document.getElementById('display');
 
-number.forEach((button) => {button.addEventListener('click', () => display.textContent+=button.textContent)});
-clearAll.addEventListener('click', () => display.textContent='');
-clear.addEventListener('click', () => {
-        
+number.forEach((button) => {
+    
+    button.addEventListener('click', () => display.textContent+=button.textContent)});
+
+clearAllButton.addEventListener('click', () => display.textContent='');
+
+clearButton.addEventListener('click', () => clear());
+
+
+function clear(){
     display.textContent = display.textContent.substring(0, display.textContent.length-1);
+}
+
+
+document.addEventListener('keydown', (event) => {
+
+    console.log(event);
+
+    if(isNaN(event.key))
+    {
+        if(event.key == 'c' || event.key == "Backspace")
+            clear();
+        else if(event.key=='.')
+        {
+            if(display.textContent.includes('.'))
+                return null;
+            display.textContent+='.';
+        }
+        else
+            return null
+    }
+    else
+        display.textContent += event.key;
 })
-// button.addEventListener('click', () => display.textContent+=button.textContent);
+
