@@ -1,2 +1,2 @@
 # Calculator
-A virtual calculator.
+A virtual calculator with arithmetic operators.
