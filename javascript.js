@@ -1,6 +1,6 @@
 function add(x, y)
 {
-    return x+y;
+    return Number(x)+Number(y);
 }
 
 function subtract(x, y)
@@ -25,55 +25,174 @@ function percentage(x)
 
 function negate(x)
 {
-    return x*-1;
+    return Number(x)*-1;
 }
 
-let operandA, operandB, operator;
+let operandA, operandB, operator, newEntry, repeat, result, pending;
 
-function operate(a, operation=percentage, b=null,)
+
+
+function operate(a=null, operation=percentage, b=null,)
 {
+    console.log('operation='+operation);
     switch (operation)
     {
-        case add:
+        case '+':
             return add(a,b);
             break;
-        case subtract:
+        case '-':
             return subtract(a,b);
             break;
-        case multiply:
+        case 'x':
             return multiply(a,b);
             break;
-        case divide:
+        case '÷':
             return divide(a,b);
             break;
-        case percentage:
+        case '%':
             return percentage(a);
             break;
-        case negate:
+        case '+/-':
             return negate(a);
             break;
     }
-    return true;
+    return 'test';
 }
+
+function backspace(){
+    display.textContent = display.textContent.substring(0, display.textContent.length-1);
+}
+
+function reset(){
+    console.log('operandA='+operandA);
+    console.log('operandB='+operandB);
+    operandA=null;
+    operandB=null;
+    result=null;
+    pending=false;
+    newEntry=null;
+}
+
+function clearAll()
+{
+    // reset();
+    display.textContent='';
+}
+
 
 const clearAllButton = document.getElementById('clearAll');
 const clearButton = document.getElementById('clear');
 const number = document.querySelectorAll('[data-number]');
 const display = document.getElementById('display');
+const operatorButton = document.querySelectorAll('[data-operator]');
+const equalButton=document.getElementById('equals');
+const negateButton=document.getElementById('negation');
+
+negateButton.addEventListener('click', ()=>{
+    if(display.textContent!='')
+        display.textContent=negate(display.textContent);
+});
+
+operatorButton.forEach((button) => {
+
+    function operation(){
+
+        pending=true;
+        button.style.cssText = 'border: 5px solid black';
+    
+        operandA=display.textContent;
+        operator=button.textContent;
+    
+        console.log('operandA='+operandA);
+        console.log('operandB='+operandB);
+        //store first operand value and operator upon operator button click 
+        
+        if(operandA && operandB)
+        {
+            display.textContent=result;   
+            operandA=result;
+            operandB=null; 
+        }
+    }
+
+    button.addEventListener('click', () => {
+        operation();
+    });
+
+    document.addEventListener('keydown', (event)=>{
+        if(event.key==button.textContent)
+                operation();
+    });
+});
+
 
 number.forEach((button) => {
+
+    function entry()
+    {
+        if(pending)
+        clearAll();
+
+        display.textContent+= button.textContent;
+
+        if(pending)
+        {
+            operandB=display.textContent
+
+            result = operate(operandA, operator, operandB);
+                // operandA=result;
+
+            pending=false;
+
+            if(!pending)
+            {
+                operatorButton.forEach((button) => {
+                    button.style.cssText = 'border: 4px solid black';
+
+                });
+            }
+        }
+    }
+
+    button.addEventListener('click', () => 
+    {
+        entry();   
+    });
+
+    document.addEventListener('keydown', (event)=>{
+        if(event.key==button.textContent)
+            entry();
+    });
+});
+
+function equal()
+{
+    if(pending)
+        operandB=display.textContent;
     
-    button.addEventListener('click', () => display.textContent+=button.textContent)});
+    console.log('operandA='+operandA);
+    console.log('operandB='+operandB);
 
-clearAllButton.addEventListener('click', () => display.textContent='');
+    result = operate(operandA, operator, operandB);
+    console.log('result='+result);
 
-clearButton.addEventListener('click', () => clear());
+    display.textContent=result;    
 
-
-function clear(){
-    display.textContent = display.textContent.substring(0, display.textContent.length-1);
+    operandA=result;
+    pending=false;
 }
 
+equalButton.addEventListener('click', ()=>{
+   
+    equal();
+})
+
+clearAllButton.addEventListener('click', () => {
+    clearAll();
+    reset();
+});
+
+clearButton.addEventListener('click', () => backspace());
 
 document.addEventListener('keydown', (event) => {
 
@@ -81,18 +200,26 @@ document.addEventListener('keydown', (event) => {
 
     if(isNaN(event.key))
     {
-        if(event.key == 'c' || event.key == "Backspace")
-            clear();
-        else if(event.key=='.')
+        switch (event.key)
         {
-            if(display.textContent.includes('.'))
+            case 'c':
+                clearAll(); reset();
+                break;
+            case 'Backspace':
+                backspace();
+                break;
+            case '.':
+                if(display.textContent.includes('.'))
+                    return null;
+                display.textContent+='.';
+                break;
+            case '=':
+                equal();
+                break;
+            case 'Enter':
+                equal();
+            default:
                 return null;
-            display.textContent+='.';
         }
-        else
-            return null
     }
-    else
-        display.textContent += event.key;
 })
-

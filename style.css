@@ -14,7 +14,7 @@ body {
     background-color: blanchedalmond;
 }
 
-#calculator, #calculator * {
+#calculator, #calculator *{
 
     display: flex;
     justify-content: space-evenly;
@@ -32,6 +32,7 @@ body {
     padding: 5px;
 
     flex-direction: column;
+    max-width: 350px;
 }
 
 #display {
@@ -45,7 +46,6 @@ body {
     
     justify-content: flex-end;
     align-items: flex-end; 
-
 }
 
 #display, button {
