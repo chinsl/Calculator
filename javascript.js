@@ -1,6 +1,6 @@
 function add(x, y)
 {
-    return Number(x)+Number(y);
+    return parseFloat(x)+parseFloat(y);
 }
 
 function subtract(x, y)
@@ -15,7 +15,10 @@ function multiply(x,y)
 
 function divide(x,y)
 {
-    return x/y;
+    if(y==0)
+        return "NO";
+    else
+        return x/y;
 }
 
 function percentage(x)
@@ -25,16 +28,18 @@ function percentage(x)
 
 function negate(x)
 {
-    return Number(x)*-1;
+return parseFloat(x)*-1;
 }
 
-let operandA, operandB, operator, newEntry, repeat, result, pending;
-
-
+let operandA, operandB, operator, result, pending;
 
 function operate(a=null, operation=percentage, b=null,)
 {
+    a=parseFloat(a);
+    b=parseFloat(b);
+
     console.log('operation='+operation);
+
     switch (operation)
     {
         case '+':
@@ -66,16 +71,14 @@ function backspace(){
 function reset(){
     console.log('operandA='+operandA);
     console.log('operandB='+operandB);
-    operandA=null;
-    operandB=null;
-    result=null;
-    pending=false;
-    newEntry=null;
+    operandA = null;
+    operandB = null;
+    result = null;
+    pending = false;
 }
 
 function clearAll()
 {
-    // reset();
     display.textContent='';
 }
 
@@ -89,21 +92,35 @@ const equalButton=document.getElementById('equals');
 const negateButton=document.getElementById('negation');
 
 negateButton.addEventListener('click', ()=>{
+
     if(display.textContent!='')
         display.textContent=negate(display.textContent);
 });
 
 operatorButton.forEach((button) => {
 
-    function operation(){
 
-        pending=true;
-        button.style.cssText = 'border: 5px solid black';
     
+    
+    function operation(){
+        
+        pending=true;
+        
+        
+        
         operandA=display.textContent;
         operator=button.textContent;
-    
+        
+        operatorButton.forEach((button)=>{
+
+            button.style.cssText = 'border: 4px solid black';
+        });
+        
+        if(button.textContent==operator)
+            button.style.cssText = 'border: 5px solid black';
+
         console.log('operandA='+operandA);
+        console.log(operator);
         console.log('operandB='+operandB);
         //store first operand value and operator upon operator button click 
         
@@ -111,17 +128,19 @@ operatorButton.forEach((button) => {
         {
             display.textContent=result;   
             operandA=result;
-            operandB=null; 
+            operandB=null;
         }
     }
 
     button.addEventListener('click', () => {
+
         operation();
     });
 
-    document.addEventListener('keydown', (event)=>{
+    document.addEventListener('keydown', (event) => {
+
         if(event.key==button.textContent)
-                operation();
+            operation();
     });
 });
 
@@ -131,7 +150,7 @@ number.forEach((button) => {
     function entry()
     {
         if(pending)
-        clearAll();
+            clearAll();
 
         display.textContent+= button.textContent;
 
@@ -139,18 +158,16 @@ number.forEach((button) => {
         {
             operandB=display.textContent
 
-            result = operate(operandA, operator, operandB);
-                // operandA=result;
+            result = Math.round((operate(operandA, operator, operandB))*100)/100;
 
             pending=false;
 
-            if(!pending)
-            {
-                operatorButton.forEach((button) => {
-                    button.style.cssText = 'border: 4px solid black';
-
-                });
-            }
+            // if(!pending)
+            // {
+                // operatorButton.forEach((button) => {
+                //     button.style.cssText = 'border: 4px solid black';
+                // });
+            // }
         }
     }
 
@@ -160,26 +177,41 @@ number.forEach((button) => {
     });
 
     document.addEventListener('keydown', (event)=>{
-        if(event.key==button.textContent)
+
+        if(event.key=='.')
+        {
+            if(display.textContent.includes('.'))
+                return null                
+                
+        }    
+        else if(event.key==button.textContent)
             entry();
     });
-});
+}); 
 
 function equal()
 {
-    if(pending)
-        operandB=display.textContent;
-    
-    console.log('operandA='+operandA);
-    console.log('operandB='+operandB);
+    if(operandB && operator)
+    {
+        if(pending)
+            operandB=display.textContent;
+        
+        console.log('operandA='+operandA);
+        console.log('operandB='+operandB);
 
-    result = operate(operandA, operator, operandB);
-    console.log('result='+result);
+        result = Math.round(operate(operandA, operator, operandB)*100)/100;
+        console.log('result='+result);
 
-    display.textContent=result;    
+        display.textContent=result;    
 
-    operandA=result;
-    pending=false;
+        operandA=result;
+        pending=false;
+
+        operatorButton.forEach((button) => {
+            button.style.cssText = 'border: 4px solid black';
+        });
+
+    }
 }
 
 equalButton.addEventListener('click', ()=>{
@@ -210,8 +242,12 @@ document.addEventListener('keydown', (event) => {
                 break;
             case '.':
                 if(display.textContent.includes('.'))
+                {   
+                    console.log(display.textContent);
                     return null;
-                display.textContent+='.';
+                }
+                else if(!display.textContent.includes('.'))
+                    display.textContent+='.';
                 break;
             case '=':
                 equal();
