@@ -1,3 +1,11 @@
+const clearButton = document.getElementById('clear');
+const deleteButton = document.getElementById('delete');
+const number = document.querySelectorAll('[data-number]');
+const display = document.getElementById('display');
+const operatorButton = document.querySelectorAll('[data-operator]');
+const equalButton=document.getElementById('equals');
+const negateButton=document.getElementById('negation');
+
 function add(x, y)
 {
     return parseFloat(x)+parseFloat(y);
@@ -55,6 +63,7 @@ function operate(a=null, operation=percentage, b=null,)
             return divide(a,b);
             break;
         case '%':
+
             return percentage(a);
             break;
         case '+/-':
@@ -65,6 +74,7 @@ function operate(a=null, operation=percentage, b=null,)
 }
 
 function backspace(){
+
     display.textContent = display.textContent.substring(0, display.textContent.length-1);
 }
 
@@ -77,36 +87,55 @@ function reset(){
     pending = false;
 }
 
-function clearAll()
+function clear()
 {
+    operatorButton.forEach((button)=>{
+
+        button.style.cssText = 'border: 4px solid black';
+    });
+
     display.textContent='';
 }
 
+function equal()
+{
+    if(operandB && operator)
+    {
+        if(pending)
+            operandB=display.textContent;
+        
+        console.log('operandA='+operandA);
+        console.log('operandB='+operandB);
 
-const clearAllButton = document.getElementById('clearAll');
-const clearButton = document.getElementById('clear');
-const number = document.querySelectorAll('[data-number]');
-const display = document.getElementById('display');
-const operatorButton = document.querySelectorAll('[data-operator]');
-const equalButton=document.getElementById('equals');
-const negateButton=document.getElementById('negation');
+        result = Math.round(operate(operandA, operator, operandB)*100)/100;
+        console.log('result='+result);
+
+        display.textContent=result;    
+
+        operandA=result;
+        pending=false;
+
+        operatorButton.forEach((button) => {
+            button.style.cssText = 'border: 4px solid black';
+        });
+
+    }
+}
 
 negateButton.addEventListener('click', ()=>{
 
     if(display.textContent!='')
         display.textContent=negate(display.textContent);
+
+    operandB=display.textContent;
+    result = Math.round((operate(operandA, operator, operandB))*100)/100;
 });
 
 operatorButton.forEach((button) => {
-
-
-    
     
     function operation(){
         
         pending=true;
-        
-        
         
         operandA=display.textContent;
         operator=button.textContent;
@@ -119,10 +148,17 @@ operatorButton.forEach((button) => {
         if(button.textContent==operator)
             button.style.cssText = 'border: 5px solid black';
 
-        console.log('operandA='+operandA);
-        console.log(operator);
-        console.log('operandB='+operandB);
-        //store first operand value and operator upon operator button click 
+        if(button.textContent=='%')
+        {
+            result = operate(display.textContent, '%');
+            display.textContent=result;   
+            operandA = result;
+            operandB = null;
+        }
+        // console.log('operandA='+operandA);
+        // console.log(operator);
+        // console.log('operandB='+operandB);
+        // //store first operand value and operator upon operator button click 
         
         if(operandA && operandB)
         {
@@ -150,13 +186,13 @@ number.forEach((button) => {
     function entry()
     {
         if(pending)
-            clearAll();
+            clear();
 
         display.textContent+= button.textContent;
 
         if(pending)
         {
-            operandB=display.textContent
+            operandB=display.textContent;
 
             result = Math.round((operate(operandA, operator, operandB))*100)/100;
 
@@ -173,7 +209,10 @@ number.forEach((button) => {
 
     button.addEventListener('click', () => 
     {
-        entry();   
+        if(display.textContent.includes('.'))
+                return null   
+        else
+            entry();   
     });
 
     document.addEventListener('keydown', (event)=>{
@@ -182,49 +221,24 @@ number.forEach((button) => {
         {
             if(display.textContent.includes('.'))
                 return null                
-                
         }    
         else if(event.key==button.textContent)
             entry();
     });
 }); 
 
-function equal()
-{
-    if(operandB && operator)
-    {
-        if(pending)
-            operandB=display.textContent;
-        
-        console.log('operandA='+operandA);
-        console.log('operandB='+operandB);
-
-        result = Math.round(operate(operandA, operator, operandB)*100)/100;
-        console.log('result='+result);
-
-        display.textContent=result;    
-
-        operandA=result;
-        pending=false;
-
-        operatorButton.forEach((button) => {
-            button.style.cssText = 'border: 4px solid black';
-        });
-
-    }
-}
-
 equalButton.addEventListener('click', ()=>{
    
     equal();
 })
 
-clearAllButton.addEventListener('click', () => {
-    clearAll();
+clearButton.addEventListener('click', () => {
+
+    clear();
     reset();
 });
 
-clearButton.addEventListener('click', () => backspace());
+deleteButton.addEventListener('click', () => backspace());
 
 document.addEventListener('keydown', (event) => {
 
@@ -235,7 +249,7 @@ document.addEventListener('keydown', (event) => {
         switch (event.key)
         {
             case 'c':
-                clearAll(); reset();
+                clear(); reset();
                 break;
             case 'Backspace':
                 backspace();

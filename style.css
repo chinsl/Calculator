@@ -75,3 +75,7 @@ button {
 #equals {
     background-color: blanchedalmond; 
 }
+
+#delete, #clear {
+    font-size: 20px;
+}
